@@ -1,0 +1,9 @@
+{
+    "mode": "development",
+    "development": {
+        "baseUrl": "https://d197-178-135-120-67.ngrok-free.app/api/v1/Domains/KMDOMTEST/"
+    },
+    "production": {
+        "baseUrl": "https://d197-178-135-120-67.ngrok-free.app/api/v1/Domains/KMDOMTEST/"
+    }
+}
