@@ -17,8 +17,6 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
-  bool _isLoading = false;
-  String? _errorMessage;
 
   final _userSettings = UserSettings();
   final LogProvider logProvider = LogProvider();
@@ -48,13 +46,6 @@ class LoginPageState extends State<LoginPage> {
       bloc.changeEmail('');
       bloc.changePassword('');
     }
-
-    // below not needed, as the StreamBuilder will rebuild the widget
-    // check it anyway
-    // Call setState if the values affect your widget's appearance
-    // if (_rememberMe || widget.checkUserSettings) {
-    //   setState(() {});
-    // }
   }
 
   @override
@@ -71,10 +62,7 @@ class LoginPageState extends State<LoginPage> {
               rememberMeCheckbox(),
               signInButton(bloc),
               registrationPrompt(),
-              _errorMessage != null
-                  ? Text(_errorMessage!,
-                      style: const TextStyle(color: Colors.red))
-                  : Container(),
+              errorText(bloc),
             ],
           ),
         ),
@@ -138,44 +126,57 @@ class LoginPageState extends State<LoginPage> {
       stream: bloc.isValid,
       builder: (context, snapshot) {
         return ElevatedButton(
-          onPressed: snapshot.hasData && snapshot.data == true && !_isLoading
+          onPressed: snapshot.hasData && snapshot.data == true
               ? () async {
-                  setState(() {
-                    _isLoading = true;
-                    _errorMessage = null;
-                  });
-
                   final navigator =
                       Navigator.of(context); // store the Navigator
 
                   final success = await bloc.authenticateUser();
                   if (success) {
-                    // navigator.pushReplacementNamed('/home');
                     navigator.pushNamed(HomePage.routeName);
                   } else {
-                    setState(() {
-                      _errorMessage = 'Incorrect email or password.';
-                      _isLoading = false;
-                    });
-                    logProvider.logWarning(_errorMessage!);
+                    logProvider.logWarning('Incorrect email or password.');
                   }
                 }
               : null, // Disabling the button if the form isn't valid
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all(Colors.blue),
           ),
-          child: _buildChildSignInBtn(),
+          child: _buildChildSignInBtn(bloc), // Pass bloc here
         );
       },
     );
   }
 
-  Widget _buildChildSignInBtn() {
-    return _isLoading
-        ? const CircularProgressIndicator(
+  Widget _buildChildSignInBtn(BlocCredential bloc) {
+    return StreamBuilder<bool>(
+      stream: bloc.isLoading,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data == true) {
+          return const CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation(Colors.white),
-          )
-        : const Text('Sign In', style: TextStyle(color: Colors.white));
+          );
+        } else {
+          return const Text('Sign In', style: TextStyle(color: Colors.white));
+        }
+      },
+    );
+  }
+
+  Widget errorText(BlocCredential bloc) {
+    return StreamBuilder<String?>(
+      stream: bloc.errorMessage,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return Text(
+            snapshot.data!,
+            style: const TextStyle(color: Colors.red),
+          );
+        } else {
+          return Container();
+        }
+      },
+    );
   }
 
   Widget registrationPrompt() {
@@ -193,13 +194,6 @@ class LoginPageState extends State<LoginPage> {
               style: TextStyle(color: Colors.orange)),
         ),
       ],
-    );
-  }
-
-  Widget errorText() {
-    return Text(
-      _errorMessage!,
-      style: const TextStyle(color: Colors.red),
     );
   }
 }

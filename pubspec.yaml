@@ -42,7 +42,7 @@ dependencies:
   flutter_svg: ^2.0.7
   font_awesome_flutter: ^10.5.0
   encrypt: ^5.0.1
-
+  flutter_stripe: ^9.3.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5

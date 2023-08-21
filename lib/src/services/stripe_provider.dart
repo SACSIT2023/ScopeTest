@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../GENERAL/card_detail.dart';
+
 class StripeProvider {
-  final String _apiKey = "YOUR_STRIPE_SECRET_KEY";
+  final String _publishableKey = "YOUR_STRIPE_PUBLISHABLE_KEY";
 
   Future<ResponseData> getToken(CardDetails cardDetails) async {
     const url = "https://api.stripe.com/v1/tokens";
@@ -11,11 +13,11 @@ class StripeProvider {
       final response = await http.post(
         Uri.parse(url),
         headers: {
-          'Authorization': 'Bearer $_apiKey',
+          'Authorization': 'Bearer $_publishableKey',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'card[number]': cardDetails.number,
+          'card[number]': cardDetails.cardNumber,
           'card[exp_month]': cardDetails.expMonth,
           'card[exp_year]': cardDetails.expYear,
           'card[cvc]': cardDetails.cvc,
@@ -45,18 +47,4 @@ class ResponseData {
   factory ResponseData.success(String data) => ResponseData._(data: data);
 
   factory ResponseData.error(String error) => ResponseData._(error: error);
-}
-
-class CardDetails {
-  final String number;
-  final String expMonth;
-  final String expYear;
-  final String cvc;
-
-  CardDetails({
-    required this.number,
-    required this.expMonth,
-    required this.expYear,
-    required this.cvc,
-  });
 }

@@ -3,7 +3,7 @@ import 'dart:async';
 class ValidatorCredential {
   final validateEmail = StreamTransformer<String, String>.fromHandlers(
     handleData: (email, sink) {
-      if (email.contains('@')) {
+      if (isValidEmail(email)) {
         sink.add(email);
       } else {
         sink.addError('invalid email');
@@ -20,4 +20,10 @@ class ValidatorCredential {
       }
     },
   );
+
+  static bool isValidEmail(String email) {
+    final RegExp regex =
+        RegExp(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
+    return regex.hasMatch(email);
+  }
 }

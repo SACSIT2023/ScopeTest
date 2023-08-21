@@ -13,23 +13,22 @@ class BlocCredential extends ValidatorCredential {
 
   BlocCredential(this.authService, this.httpController);
 
-  final _email = StreamController<String>();
-  final _password = StreamController<String>();
-
-  String? _latestEmail = "";
-  String? _latestPassword = "";
+  final BehaviorSubject<String> _email = BehaviorSubject<String>();
+  final BehaviorSubject<String> _password = BehaviorSubject<String>();
+  final _isLoading = BehaviorSubject<bool>.seeded(false);
+  final _errorMessage = BehaviorSubject<String?>.seeded(null);
 
   // Add data to stream
   Stream<String> get email => _email.stream.transform(validateEmail);
   Stream<String> get password => _password.stream.transform(validatePassword);
+  Stream<bool> get isLoading => _isLoading.stream;
+  Stream<String?> get errorMessage => _errorMessage.stream;
 
   // Change data
   Function(String) get changeEmail => (email) {
-        _latestEmail = email;
         _email.sink.add(email);
       };
   Function(String) get changePassword => (password) {
-        _latestPassword = password;
         _password.sink.add(password);
       };
 
@@ -41,37 +40,42 @@ class BlocCredential extends ValidatorCredential {
 
 // business logic
   Future<bool> authenticateUser() async {
-    if (_latestEmail != null &&
-        _latestEmail != '' &&
-        _latestPassword != null &&
-        _latestPassword != '') {
+    String? currentEmail = _email.value;
+    String? currentPassword = _password.value;
+
+    _isLoading.sink.add(true);
+    _errorMessage.sink.add(null);
+
+    if (currentEmail.isNotEmpty && currentPassword.isNotEmpty) {
       final response =
-          await httpController.userLogin(_latestEmail!, _latestPassword!);
+          await httpController.userLogin(currentEmail, currentPassword);
       String? token = response['item1'];
 
       if (token != null) {
         authService.setToken(token);
-        await _userSettings.saveUserCredentials(
-            _latestEmail!, _latestPassword!);
+        await _userSettings.saveUserCredentials(currentEmail, currentPassword);
         return true;
+      } else {
+        _errorMessage.sink.add('Incorrect email or password.');
       }
+      _isLoading.sink.add(false);
     }
     return false;
   }
 
   Future<bool> registerUser(
       String company, String firstName, String lastName) async {
-    if (_latestEmail != null &&
-        _latestEmail != '' &&
-        _latestPassword != null &&
-        _latestPassword != '') {
+    String? currentEmail = _email.value;
+    String? currentPassword = _password.value;
+
+    if (currentEmail.isNotEmpty && currentPassword.isNotEmpty) {
       final response = await httpController.userSignup(
-          company, firstName, lastName, _latestEmail!, _latestPassword!);
+          company, firstName, lastName, currentEmail, currentPassword);
       String? token = response['item1'];
+
       if (token != null) {
         authService.setToken(token);
-        await _userSettings.saveUserCredentials(
-            _latestEmail!, _latestPassword!);
+        await _userSettings.saveUserCredentials(currentEmail, currentPassword);
         return true;
       }
     }
@@ -79,7 +83,9 @@ class BlocCredential extends ValidatorCredential {
   }
 
   Future<bool> signoutUser(String email) async {
-    if (_latestEmail != null && _latestEmail != '') {
+    String? currentEmail = _email.value;
+
+    if (currentEmail.isNotEmpty) {
       final response = await httpController.userLogout(email);
       if (response.isNotEmpty) {
         authService.setToken('');
@@ -94,5 +100,7 @@ class BlocCredential extends ValidatorCredential {
   void dispose() {
     _email.close();
     _password.close();
+    _isLoading.close();
+    _errorMessage.close();
   }
 }
