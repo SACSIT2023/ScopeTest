@@ -25,3 +25,18 @@ class NavigationService {
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }
+
+// *** Forward Navigation with Data:  ***
+//      .pushNamed('/screenB', arguments: 'Hello!');
+//  Called Screen (Screen B) retrieves the data:
+//  String data = ModalRoute.of(context)!.settings.arguments as String;
+
+
+// ***** Backward Navigation with Data: *****
+//     Called Screen (Screen B) returns data:
+//          .pop('Hello back to Screen A');
+
+//    Caller Screen (Screen A) retrieves the data:
+//      var result = await .pushNamed('/screenB');
+//      print(result);  // prints: Hello back to Screen A
+
