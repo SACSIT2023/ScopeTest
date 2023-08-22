@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 
-import 'src/CardPayment/stripe_service.dart';
-import 'src/CardPayment/tokenization_bloc.dart';
+import 'src/CreditCards/stripe_service.dart';
+import 'src/CreditCards/tokenization_bloc.dart';
 import 'src/Credentials/bloc_credential.dart';
+import 'src/Credentials/http_credential.dart';
 import 'src/Credentials/user_settings_service.dart';
 import 'src/app.dart';
 import 'src/services/app_image_paths.dart';
@@ -28,6 +29,8 @@ void main() {
   getIt.registerSingleton<SettingsService>(SettingsService());
 
   getIt.registerSingleton<HttpController>(HttpController());
+  getIt.registerSingleton<HttpCredential>(HttpCredential());
+
   getIt.registerSingleton<NavigationService>(NavigationService());
 
   getIt.registerSingleton<StripeService>(StripeService());

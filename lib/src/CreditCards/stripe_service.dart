@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'card_detail.dart';
+import 'card_details.dart';
 
 class StripeService {
   final String _publishableKey = "YOUR_STRIPE_PUBLISHABLE_KEY";
