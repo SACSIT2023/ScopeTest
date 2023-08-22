@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:scope_test/src/Credentials/validator_credential.dart';
-import 'package:scope_test/src/services/http_controller.dart';
 
 import '../services/auth_tocken_service.dart';
 
+import 'http_credential.dart';
 import 'user_settings_service.dart';
 
 class BlocCredential extends ValidatorCredential {
   final AuthTockenService _authService = AuthTockenService();
-  final HttpController _httpController = HttpController();
+  final HttpCredential _httpCredential = HttpCredential();
   final UserSettingsService _userSettings = UserSettingsService();
 
   BlocCredential();
@@ -53,7 +53,7 @@ class BlocCredential extends ValidatorCredential {
 
     if (currentEmail.isNotEmpty && currentPassword.isNotEmpty) {
       final response =
-          await _httpController.userLogin(currentEmail, currentPassword);
+          await _httpCredential.userLogin(currentEmail, currentPassword);
       String? token = response['item1'];
 
       if (token != null) {
@@ -75,7 +75,7 @@ class BlocCredential extends ValidatorCredential {
     String? currentPassword = _password.value;
 
     if (currentEmail.isNotEmpty && currentPassword.isNotEmpty) {
-      final response = await _httpController.userSignup(
+      final response = await _httpCredential.userSignup(
           company, firstName, lastName, currentEmail, currentPassword);
       String? token = response['item1'];
 
@@ -92,7 +92,7 @@ class BlocCredential extends ValidatorCredential {
     String? currentEmail = _email.value;
 
     if (currentEmail.isNotEmpty) {
-      final response = await _httpController.userLogout(email);
+      final response = await _httpCredential.userLogout(email);
       if (response.isNotEmpty) {
         _authService.setToken('');
         return true;
