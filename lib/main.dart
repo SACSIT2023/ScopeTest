@@ -1,45 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scope_test/src/blocs/bloc_credential.dart';
-import 'package:scope_test/src/blocs/tokenization_bloc.dart';
-import 'package:scope_test/src/controllers/http_controller.dart';
-import 'package:scope_test/src/services/auth_service.dart';
-import 'package:scope_test/src/services/device_info_service.dart';
-import 'package:scope_test/src/services/stripe_provider.dart';
+import 'package:get_it/get_it.dart';
+
+import 'src/CardPayment/stripe_service.dart';
+import 'src/CardPayment/tokenization_bloc.dart';
+import 'src/Credentials/bloc_credential.dart';
+import 'src/Credentials/user_settings_service.dart';
 import 'src/app.dart';
+import 'src/services/app_image_paths.dart';
+import 'src/services/auth_tocken_service.dart';
+import 'src/services/config_service.dart';
+import 'src/services/device_info_service.dart';
+import 'src/services/http_controller.dart';
+import 'src/services/logger_service.dart';
+import 'src/services/navigation_service.dart';
+import 'src/services/settings_service.dart';
 
 void main() {
+  final getIt = GetIt.instance;
+
+  getIt.registerSingleton<AppImagePaths>(AppImagePaths());
+  getIt.registerSingleton<AuthTockenService>(AuthTockenService());
+  getIt.registerSingleton<ConfigService>(ConfigService());
+  getIt.registerSingleton<DeviceInfoService>(DeviceInfoService());
+
+  getIt.registerSingleton<LoggerService>(LoggerService());
+  getIt.registerSingleton<SettingsService>(SettingsService());
+
+  getIt.registerSingleton<HttpController>(HttpController());
+  getIt.registerSingleton<NavigationService>(NavigationService());
+
+  getIt.registerSingleton<StripeService>(StripeService());
+  getIt.registerSingleton<UserSettingsService>(UserSettingsService());
+
   runApp(
     MultiProvider(
       providers: [
-        Provider<AuthProvider>(
-          create: (context) => AuthProvider(),
-        ),
-        Provider<DeviceInfoProvider>(
-          create: (context) => DeviceInfoProvider(),
-        ),
-        Provider<StripeProvider>(
-          create: (context) => StripeProvider(),
-        ),
-        Provider<HttpController>(
-          create: (context) {
-            final authService = context.read<AuthProvider>();
-            final deviceInfoService = context.read<DeviceInfoProvider>();
-            return HttpController(authService, deviceInfoService);
-          },
-        ),
         Provider<BlocCredential>(
           create: (context) {
-            final authService = context.read<AuthProvider>();
-            final httpController = context.read<HttpController>();
-            return BlocCredential(authService, httpController);
+            // final authService = context.read<AuthTockenService>();
+            // final httpController = context.read<HttpController>();
+            return BlocCredential();
           },
           dispose: (context, bloc) => bloc.dispose(),
         ),
         Provider<TokenizationBloc>(
           create: (context) {
-            final stripeProvider = context.read<StripeProvider>();
-            return TokenizationBloc(stripeProvider);
+            // final stripeProvider = context.read<StripeService>();
+            return TokenizationBloc();
           },
           dispose: (context, bloc) => bloc.dispose(),
         ),

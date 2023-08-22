@@ -2,15 +2,10 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logging/logging.dart';
 
-class LogProvider {
+class LoggerService {
   final Logger log = Logger('LogProvider');
-  static final LogProvider _instance = LogProvider._();
 
-  factory LogProvider() {
-    return _instance;
-  }
-
-  LogProvider._() {
+  LoggerService() {
     log.onRecord.listen((record) async {
       await _storeLog(record);
     });

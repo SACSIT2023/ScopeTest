@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'card_detail.dart';
 
-import '../GENERAL/card_detail.dart';
-
-class StripeProvider {
+class StripeService {
   final String _publishableKey = "YOUR_STRIPE_PUBLISHABLE_KEY";
 
   Future<ResponseData> getToken(CardDetails cardDetails) async {

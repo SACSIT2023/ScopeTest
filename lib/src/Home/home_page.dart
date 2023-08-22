@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import '../services/app_image_provider.dart';
-import 'login_page.dart';
+import '../services/app_image_paths.dart';
+import '../Credentials/login_page.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home';
@@ -25,7 +25,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: SvgPicture.asset(AppImageProvider.mainbackground)),
+      body: Center(child: SvgPicture.asset(AppImagePaths.mainbackground)),
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:scope_test/src/screens/login_page.dart';
-import 'package:scope_test/src/screens/home_page.dart';
+import 'package:scope_test/src/Credentials/login_page.dart';
+import 'package:scope_test/src/Home/home_page.dart';
+
+import 'services/navigation_service.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -10,6 +12,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Log Me In',
       initialRoute: HomePage.routeName,
+      navigatorKey: NavigationService().navigatorKey,
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case LoginPage.routeName:

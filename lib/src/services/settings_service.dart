@@ -2,17 +2,7 @@ import 'package:encrypt/encrypt.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsService {
-  static final SettingsService _instance = SettingsService._();
-
   final encrypter = Encrypter(AES(Key.fromUtf8('your-secret-key-here-protoX')));
-
-  // Private constructor
-  SettingsService._();
-
-  // Factory constructor
-  factory SettingsService() {
-    return _instance;
-  }
 
   Future<void> saveValue(String key, String value,
       {bool encrypt = false}) async {
@@ -32,5 +22,15 @@ class SettingsService {
       return encrypter.decrypt64(value);
     }
     return value;
+  }
+
+  Future<void> saveBoolValue(String key, bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(key, value);
+  }
+
+  Future<bool?> getBoolValue(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(key);
   }
 }

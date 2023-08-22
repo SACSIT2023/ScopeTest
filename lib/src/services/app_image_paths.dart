@@ -23,7 +23,7 @@
 //    import 'package:flutter_svg/flutter_svg.dart';
 //   SvgPicture.asset(AppImageProvider.logo);
 //   flutter_svg: ^2.0.7
-class AppImageProvider {
+class AppImagePaths {
   static const String logo = 'assets/images/logos/logo.svg';
   static const String mainbackground = 'assets/images/background.svg';
   static const String loginbackground = 'assets/images/login_background.svg';

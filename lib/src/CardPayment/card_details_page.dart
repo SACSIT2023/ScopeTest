@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../blocs/tokenization_bloc.dart';
+import 'package:provider/provider.dart';
+import 'tokenization_bloc.dart';
 
 class CardDetailsPage extends StatefulWidget {
-  final TokenizationBloc bloc;
+  static const routeName = '/CardDetailsPage'; // Named route
 
-  const CardDetailsPage({super.key, required this.bloc});
+  const CardDetailsPage({super.key});
 
   @override
   CardDetailsPageState createState() => CardDetailsPageState();
@@ -18,7 +19,14 @@ class CardDetailsPageState extends State<CardDetailsPage> {
   final _cardNameController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of<TokenizationBloc>(context, listen: false);
+
     return Scaffold(
       appBar: buildAppBar(),
       body: SingleChildScrollView(
@@ -26,13 +34,13 @@ class CardDetailsPageState extends State<CardDetailsPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              buildCardNumberField(),
-              buildCvcField(),
-              buildExpMonthField(),
-              buildExpYearField(),
-              buildCardNameField(),
-              buildTokenizationStatus(),
-              buildTokenizeCardButton(),
+              buildCardNumberField(bloc),
+              buildCvcField(bloc),
+              buildExpMonthField(bloc),
+              buildExpYearField(bloc),
+              buildCardNameField(bloc),
+              buildTokenizationStatus(bloc),
+              buildTokenizeCardButton(bloc),
             ],
           ),
         ),
@@ -46,9 +54,9 @@ class CardDetailsPageState extends State<CardDetailsPage> {
     );
   }
 
-  Widget buildCardNumberField() {
+  Widget buildCardNumberField(TokenizationBloc bloc) {
     return StreamBuilder<String>(
-      stream: widget.bloc.cardNumber,
+      stream: bloc.cardNumber,
       builder: (context, snapshot) {
         return TextField(
           controller: _cardNumberController,
@@ -56,15 +64,15 @@ class CardDetailsPageState extends State<CardDetailsPage> {
             labelText: "Card Number",
             errorText: snapshot.error?.toString(),
           ),
-          onChanged: widget.bloc.changeCardNumber,
+          onChanged: bloc.changeCardNumber,
         );
       },
     );
   }
 
-  Widget buildCvcField() {
+  Widget buildCvcField(TokenizationBloc bloc) {
     return StreamBuilder<String>(
-      stream: widget.bloc.cvc,
+      stream: bloc.cvc,
       builder: (context, snapshot) {
         return TextField(
           controller: _cvcController,
@@ -72,15 +80,15 @@ class CardDetailsPageState extends State<CardDetailsPage> {
             labelText: "CVC",
             errorText: snapshot.error?.toString(),
           ),
-          onChanged: widget.bloc.changeCvc,
+          onChanged: bloc.changeCvc,
         );
       },
     );
   }
 
-  Widget buildExpMonthField() {
+  Widget buildExpMonthField(TokenizationBloc bloc) {
     return StreamBuilder<String>(
-      stream: widget.bloc.expMonth,
+      stream: bloc.expMonth,
       builder: (context, snapshot) {
         return TextField(
           controller: _expMonthController,
@@ -88,15 +96,15 @@ class CardDetailsPageState extends State<CardDetailsPage> {
             labelText: "Expiration Month",
             errorText: snapshot.error?.toString(),
           ),
-          onChanged: widget.bloc.changeExpMonth,
+          onChanged: bloc.changeExpMonth,
         );
       },
     );
   }
 
-  Widget buildExpYearField() {
+  Widget buildExpYearField(TokenizationBloc bloc) {
     return StreamBuilder<String>(
-      stream: widget.bloc.expYear,
+      stream: bloc.expYear,
       builder: (context, snapshot) {
         return TextField(
           controller: _expYearController,
@@ -104,15 +112,15 @@ class CardDetailsPageState extends State<CardDetailsPage> {
             labelText: "Expiration Year",
             errorText: snapshot.error?.toString(),
           ),
-          onChanged: widget.bloc.changeExpYear,
+          onChanged: bloc.changeExpYear,
         );
       },
     );
   }
 
-  Widget buildCardNameField() {
+  Widget buildCardNameField(TokenizationBloc bloc) {
     return StreamBuilder<String>(
-      stream: widget.bloc.cardName,
+      stream: bloc.cardName,
       builder: (context, snapshot) {
         return TextField(
           controller: _cardNameController,
@@ -120,15 +128,15 @@ class CardDetailsPageState extends State<CardDetailsPage> {
             labelText: "Card Name",
             errorText: snapshot.error?.toString(),
           ),
-          onChanged: widget.bloc.changeCardName,
+          onChanged: bloc.changeCardName,
         );
       },
     );
   }
 
-  Widget buildTokenizationStatus() {
+  Widget buildTokenizationStatus(TokenizationBloc bloc) {
     return StreamBuilder<TokenizationState>(
-      stream: widget.bloc.state,
+      stream: bloc.state,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final state = snapshot.data!;
@@ -148,12 +156,12 @@ class CardDetailsPageState extends State<CardDetailsPage> {
     );
   }
 
-  Widget buildTokenizeCardButton() {
+  Widget buildTokenizeCardButton(TokenizationBloc bloc) {
     return StreamBuilder<bool>(
-      stream: widget.bloc.isValid, // Assuming you have added the isValid stream
+      stream: bloc.isValid, // Assuming you have added the isValid stream
       builder: (BuildContext context, AsyncSnapshot<bool> validSnapshot) {
         return StreamBuilder<TokenizationState>(
-          stream: widget.bloc.state,
+          stream: bloc.state,
           builder: (BuildContext context,
               AsyncSnapshot<TokenizationState> stateSnapshot) {
             bool isLoading =
@@ -163,7 +171,7 @@ class CardDetailsPageState extends State<CardDetailsPage> {
               onPressed:
                   (validSnapshot.hasData && validSnapshot.data! && !isLoading)
                       ? () {
-                          widget.bloc.tokenize();
+                          bloc.tokenize();
                         }
                       : null, // null disables the button
               child: isLoading

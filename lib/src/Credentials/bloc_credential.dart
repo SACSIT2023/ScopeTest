@@ -1,17 +1,18 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
-import 'package:scope_test/src/validators/validator_credential.dart';
+import 'package:scope_test/src/Credentials/validator_credential.dart';
+import 'package:scope_test/src/services/http_controller.dart';
 
-import '../services/auth_service.dart';
-import '../controllers/http_controller.dart';
-import '../services/user_settings.dart';
+import '../services/auth_tocken_service.dart';
+
+import 'user_settings_service.dart';
 
 class BlocCredential extends ValidatorCredential {
-  final AuthProvider authService;
-  final HttpController httpController;
-  final _userSettings = UserSettings();
+  final AuthTockenService _authService = AuthTockenService();
+  final HttpController _httpController = HttpController();
+  final UserSettingsService _userSettings = UserSettingsService();
 
-  BlocCredential(this.authService, this.httpController);
+  BlocCredential();
 
   final BehaviorSubject<String> _email = BehaviorSubject<String>();
   final BehaviorSubject<String> _password = BehaviorSubject<String>();
@@ -32,6 +33,10 @@ class BlocCredential extends ValidatorCredential {
         _password.sink.add(password);
       };
 
+  void setErrorMessage(String? message) {
+    _errorMessage.sink.add(message);
+  }
+
   Stream<bool> get isValid => Rx.combineLatest2(
       email,
       password,
@@ -48,18 +53,19 @@ class BlocCredential extends ValidatorCredential {
 
     if (currentEmail.isNotEmpty && currentPassword.isNotEmpty) {
       final response =
-          await httpController.userLogin(currentEmail, currentPassword);
+          await _httpController.userLogin(currentEmail, currentPassword);
       String? token = response['item1'];
 
       if (token != null) {
-        authService.setToken(token);
+        _authService.setToken(token);
         await _userSettings.saveUserCredentials(currentEmail, currentPassword);
+        _isLoading.sink.add(false);
         return true;
       } else {
         _errorMessage.sink.add('Incorrect email or password.');
       }
-      _isLoading.sink.add(false);
     }
+    _isLoading.sink.add(false);
     return false;
   }
 
@@ -69,12 +75,12 @@ class BlocCredential extends ValidatorCredential {
     String? currentPassword = _password.value;
 
     if (currentEmail.isNotEmpty && currentPassword.isNotEmpty) {
-      final response = await httpController.userSignup(
+      final response = await _httpController.userSignup(
           company, firstName, lastName, currentEmail, currentPassword);
       String? token = response['item1'];
 
       if (token != null) {
-        authService.setToken(token);
+        _authService.setToken(token);
         await _userSettings.saveUserCredentials(currentEmail, currentPassword);
         return true;
       }
@@ -86,9 +92,9 @@ class BlocCredential extends ValidatorCredential {
     String? currentEmail = _email.value;
 
     if (currentEmail.isNotEmpty) {
-      final response = await httpController.userLogout(email);
+      final response = await _httpController.userLogout(email);
       if (response.isNotEmpty) {
-        authService.setToken('');
+        _authService.setToken('');
         return true;
       }
     }

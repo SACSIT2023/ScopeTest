@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 
-import '../GENERAL/card_detail.dart';
-import '../services/stripe_provider.dart';
-import '../validators/card_validator.dart';
+import 'card_detail.dart';
+import 'stripe_service.dart';
+import 'card_validator.dart';
 
 enum TokenizationStatus { initial, loading, success, error }
 
@@ -16,13 +16,12 @@ class TokenizationState {
 }
 
 class TokenizationBloc extends CardValidator {
-  final StripeProvider _stripeProvider;
+  final StripeService _stripeService = StripeService();
+
+  TokenizationBloc();
 
   final _stateController = BehaviorSubject<TokenizationState>.seeded(
       TokenizationState(status: TokenizationStatus.initial));
-
-  // Initialize the StripeProvider through the constructor
-  TokenizationBloc(this._stripeProvider);
 
   Stream<TokenizationState> get state => _stateController.stream;
 
@@ -85,7 +84,7 @@ class TokenizationBloc extends CardValidator {
       cardName: cardName,
     );
 
-    final response = await _stripeProvider.getToken(cardDetails);
+    final response = await _stripeService.getToken(cardDetails);
 
     if (response.data != null) {
       _stateController.add(TokenizationState(

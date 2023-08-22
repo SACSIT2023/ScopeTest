@@ -2,16 +2,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class ConfigService {
-  static final ConfigService _instance = ConfigService._();
   late final bool modeDevelopment;
   late final String baseUrl;
   bool ready = false;
 
-  factory ConfigService() {
-    return _instance;
-  }
-
-  ConfigService._() {
+  ConfigService() {
     _fetchConfig();
   }
 

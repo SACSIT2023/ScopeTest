@@ -1,20 +1,21 @@
 import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
-import 'package:scope_test/src/services/device_info_service.dart';
-import '../services/auth_service.dart';
-import '../services/config_provider.dart';
-import '../services/log_provider.dart';
+
+import 'auth_tocken_service.dart';
+import 'config_service.dart';
+import 'device_info_service.dart';
+import 'logger_service.dart';
 
 enum HttpMethod { post, put }
 
 class HttpController {
-  final AuthProvider authService;
-  final DeviceInfoProvider deviceInfoService;
-  final LogProvider logProvider = LogProvider();
+  final AuthTockenService authService = AuthTockenService();
+  final DeviceInfoService deviceInfoService = DeviceInfoService();
+  final LoggerService logProvider = LoggerService();
   final ConfigService configProvider = ConfigService();
 
-  HttpController(this.authService, this.deviceInfoService);
+  HttpController();
 
   String getBaseUrl() {
     return configProvider.baseUrl;

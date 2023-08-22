@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../blocs/bloc_credential.dart';
-import '../services/log_provider.dart';
-import '../services/user_settings.dart';
-import 'home_page.dart';
+import '../services/navigation_service.dart';
+import 'user_settings_service.dart';
+import 'bloc_credential.dart';
+import '../services/logger_service.dart';
+import '../Home/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/LoginPage'; // Named route
@@ -18,8 +19,8 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
 
-  final _userSettings = UserSettings();
-  final LogProvider logProvider = LogProvider();
+  final UserSettingsService _userSettings = UserSettingsService();
+  final LoggerService _logProvider = LoggerService();
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class LoginPageState extends State<LoginPage> {
   Future<void> _loadUserSettings(BuildContext context) async {
     final bloc = Provider.of<BlocCredential>(context, listen: false);
 
-    _rememberMe = await _userSettings.isRememberMeChecked();
+    _rememberMe = await _userSettings.getRememberMe();
     final credentials = await _userSettings.retrieveUserCredentials();
 
     final email = credentials['email'] ?? '';
@@ -115,7 +116,7 @@ class LoginPageState extends State<LoginPage> {
         setState(() {
           _rememberMe = value!;
         });
-        _userSettings.toggleRememberMe(value!);
+        _userSettings.saveRememberMe(value!);
       },
       title: const Text('Remember me'),
     );
@@ -128,14 +129,11 @@ class LoginPageState extends State<LoginPage> {
         return ElevatedButton(
           onPressed: snapshot.hasData && snapshot.data == true
               ? () async {
-                  final navigator =
-                      Navigator.of(context); // store the Navigator
-
                   final success = await bloc.authenticateUser();
                   if (success) {
-                    navigator.pushNamed(HomePage.routeName);
+                    NavigationService().navigateTo(HomePage.routeName);
                   } else {
-                    logProvider.logWarning('Incorrect email or password.');
+                    _logProvider.logWarning('Incorrect email or password.');
                   }
                 }
               : null, // Disabling the button if the form isn't valid
@@ -188,7 +186,7 @@ class LoginPageState extends State<LoginPage> {
         TextButton(
           onPressed: () {
             // replace with form SingUp:
-            Navigator.of(context).pushNamed(HomePage.routeName);
+            NavigationService().navigateTo(HomePage.routeName);
           },
           child: const Text('[Create Account]',
               style: TextStyle(color: Colors.orange)),
