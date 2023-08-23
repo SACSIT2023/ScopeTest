@@ -19,13 +19,12 @@ class CardDetailsPublic {
 
   // convert JSON to CardDetailsPublic
   static CardDetailsPublic fromJson(Map<String, dynamic> json) {
-    String ct = CardsUtility.getCardType(json['cardNumber']);
     return CardDetailsPublic(
         cardName: json['cardName'],
         cardNumber: json['cardNumber'],
         expMonth: json['expMonth'],
         expYear: json['expYear'],
         id: json['id'],
-        cardType: ct);
+        cardType: json['cardType']);
   }
 }

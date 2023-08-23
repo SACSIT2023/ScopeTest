@@ -10,7 +10,6 @@ import 'src/Credentials/bloc_credential.dart';
 import 'src/Credentials/http_credential.dart';
 import 'src/Credentials/user_settings_service.dart';
 import 'src/app.dart';
-import 'src/services/app_image_paths.dart';
 import 'src/services/auth_tocken_service.dart';
 import 'src/services/config_service.dart';
 import 'src/services/device_info_service.dart';
@@ -22,21 +21,20 @@ import 'src/services/settings_service.dart';
 void main() {
   final getIt = GetIt.instance;
 
+  getIt.registerSingleton<NavigationService>(NavigationService());
   getIt.registerSingleton<MainData>(MainData());
-  getIt.registerSingleton<AppImagePaths>(AppImagePaths());
+
+  getIt.registerSingleton<SettingsService>(SettingsService());
   getIt.registerSingleton<AuthTockenService>(AuthTockenService());
   getIt.registerSingleton<ConfigService>(ConfigService());
   getIt.registerSingleton<DeviceInfoService>(DeviceInfoService());
 
   getIt.registerSingleton<LoggerService>(LoggerService());
-  getIt.registerSingleton<SettingsService>(SettingsService());
 
   getIt.registerSingleton<HttpController>(HttpController());
   getIt.registerSingleton<HttpCredential>(HttpCredential());
 
   getIt.registerSingleton<CreditCardManager>(CreditCardManager());
-
-  getIt.registerSingleton<NavigationService>(NavigationService());
 
   getIt.registerSingleton<StripeService>(StripeService());
   getIt.registerSingleton<UserSettingsService>(UserSettingsService());
