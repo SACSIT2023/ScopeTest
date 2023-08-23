@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:scope_test/src/Credentials/validator_credential.dart';
 
+import '../../main_data.dart';
 import '../services/auth_tocken_service.dart';
 
 import 'http_credential.dart';
@@ -11,6 +12,7 @@ class BlocCredential extends ValidatorCredential {
   final AuthTockenService _authService = AuthTockenService();
   final HttpCredential _httpCredential = HttpCredential();
   final UserSettingsService _userSettings = UserSettingsService();
+  final MainData _mainData = MainData();
 
   BlocCredential();
 
@@ -57,6 +59,7 @@ class BlocCredential extends ValidatorCredential {
       String? token = response['item1'];
 
       if (token != null) {
+        _mainData.setuserEmail(currentEmail);
         _authService.setToken(token);
         await _userSettings.saveUserCredentials(currentEmail, currentPassword);
         _isLoading.sink.add(false);
@@ -80,6 +83,7 @@ class BlocCredential extends ValidatorCredential {
       String? token = response['item1'];
 
       if (token != null) {
+        _mainData.setuserEmail(currentEmail);
         _authService.setToken(token);
         await _userSettings.saveUserCredentials(currentEmail, currentPassword);
         return true;
@@ -95,6 +99,7 @@ class BlocCredential extends ValidatorCredential {
       final response = await _httpCredential.userLogout(email);
       if (response.isNotEmpty) {
         _authService.setToken('');
+        _mainData.setuserEmail('');
         return true;
       }
     }

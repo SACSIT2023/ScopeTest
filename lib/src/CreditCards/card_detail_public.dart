@@ -12,4 +12,15 @@ class CardDetailsPublic {
     required this.expYear,
     required this.id,
   });
+
+  // convert JSON to CardDetailsPublic
+  static CardDetailsPublic fromJson(Map<String, dynamic> json) {
+    return CardDetailsPublic(
+      cardName: json['cardName'],
+      cardNumber: json['cardNumber'],
+      expMonth: json['expMonth'],
+      expYear: json['expYear'],
+      id: json['id'],
+    );
+  }
 }
