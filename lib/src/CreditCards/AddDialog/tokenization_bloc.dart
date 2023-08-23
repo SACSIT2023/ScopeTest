@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 
-import 'card_details.dart';
+import '../card_details.dart';
 import 'stripe_service.dart';
 import 'card_validator.dart';
 

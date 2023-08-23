@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 
 import 'main_data.dart';
-
-import 'src/CreditCards/stripe_service.dart';
-import 'src/CreditCards/tokenization_bloc.dart';
+import 'src/CreditCards/credit_card_manager.dart';
+import 'src/CreditCards/AddDialog/stripe_service.dart';
+import 'src/CreditCards/AddDialog/tokenization_bloc.dart';
 import 'src/Credentials/bloc_credential.dart';
 import 'src/Credentials/http_credential.dart';
 import 'src/Credentials/user_settings_service.dart';
@@ -22,6 +22,7 @@ import 'src/services/settings_service.dart';
 void main() {
   final getIt = GetIt.instance;
 
+  getIt.registerSingleton<MainData>(MainData());
   getIt.registerSingleton<AppImagePaths>(AppImagePaths());
   getIt.registerSingleton<AuthTockenService>(AuthTockenService());
   getIt.registerSingleton<ConfigService>(ConfigService());
@@ -33,12 +34,12 @@ void main() {
   getIt.registerSingleton<HttpController>(HttpController());
   getIt.registerSingleton<HttpCredential>(HttpCredential());
 
+  getIt.registerSingleton<CreditCardManager>(CreditCardManager());
+
   getIt.registerSingleton<NavigationService>(NavigationService());
 
   getIt.registerSingleton<StripeService>(StripeService());
   getIt.registerSingleton<UserSettingsService>(UserSettingsService());
-
-  getIt.registerSingleton<MainData>(MainData());
 
   runApp(
     MultiProvider(

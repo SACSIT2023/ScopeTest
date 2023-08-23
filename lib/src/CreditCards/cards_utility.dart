@@ -53,15 +53,19 @@ class CardsUtility {
   }
 
   static String getCardNumberMasked(String cardNumber) {
-    String cardNumberMasked = "";
-    for (int i = 0; i < cardNumber.length; i++) {
-      if (i < cardNumber.length - 4) {
-        cardNumberMasked += "*";
-      } else {
-        cardNumberMasked += cardNumber[i];
-      }
+    if (cardNumber.length < 8) {
+      return cardNumber; // Return original if it's too short
     }
-    return cardNumberMasked;
+    String firstFour = cardNumber.substring(0, 4);
+    String lastFour = cardNumber.substring(cardNumber.length - 4);
+    return '$firstFour....$lastFour';
+  }
+
+  static String getLastFourDigits(String cardNumber) {
+    if (cardNumber.length < 4) {
+      return cardNumber; // Return original if it's too short
+    }
+    return '....${cardNumber.substring(cardNumber.length - 4)}';
   }
 
   static String getCardHolderName(String cardHolderName) {
@@ -72,3 +76,5 @@ class CardsUtility {
     }
   }
 }
+// check visa is used well to get png
+// check when we return carnber to public we return first & last 4 digits
