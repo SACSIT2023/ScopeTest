@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 
+import 'main_data.dart';
+
 import 'src/CreditCards/stripe_service.dart';
 import 'src/CreditCards/tokenization_bloc.dart';
 import 'src/Credentials/bloc_credential.dart';
@@ -35,6 +37,8 @@ void main() {
 
   getIt.registerSingleton<StripeService>(StripeService());
   getIt.registerSingleton<UserSettingsService>(UserSettingsService());
+
+  getIt.registerSingleton<MainData>(MainData());
 
   runApp(
     MultiProvider(
