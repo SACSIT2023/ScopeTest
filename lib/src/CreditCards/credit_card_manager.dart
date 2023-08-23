@@ -19,6 +19,10 @@ class CreditCardManager {
         true,
       );
 
+      if (response['data'] == null) {
+        return [];
+      }
+
       return (response['data'] as List)
           .map((item) => CardDetailsPublic.fromJson(item))
           .toList();

@@ -1,13 +1,15 @@
 import 'package:connectivity/connectivity.dart';
+import 'package:get_it/get_it.dart';
 
 import '../services/device_info_service.dart';
 import '../services/http_controller.dart';
 import '../services/logger_service.dart';
 
 class HttpCredential {
-  final HttpController _httpController = HttpController();
-  final DeviceInfoService _deviceInfoService = DeviceInfoService();
-  final LoggerService _logProvider = LoggerService();
+  final HttpController _httpController = GetIt.instance<HttpController>();
+  final DeviceInfoService _deviceInfoService =
+      GetIt.instance<DeviceInfoService>();
+  final LoggerService _logProvider = GetIt.instance<LoggerService>();
 
   Future<Map<String, String?>> userLogin(String email, String password) async {
     try {

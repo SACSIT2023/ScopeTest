@@ -2,10 +2,11 @@ import 'dart:io' show Platform;
 import 'dart:convert';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
 class DeviceInfoService {
-  final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  final DeviceInfoPlugin deviceInfoPlugin = GetIt.instance<DeviceInfoPlugin>();
 
   Future<String> getOperatingSystem() async {
     if (kIsWeb) {

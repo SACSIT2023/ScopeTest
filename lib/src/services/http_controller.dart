@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'auth_tocken_service.dart';
 import 'config_service.dart';
@@ -7,10 +8,9 @@ import 'logger_service.dart';
 enum HttpMethod { post, put }
 
 class HttpController {
-  final AuthTockenService authService = AuthTockenService();
-
-  final LoggerService logProvider = LoggerService();
-  final ConfigService configProvider = ConfigService();
+  final AuthTockenService authService = GetIt.instance<AuthTockenService>();
+  final LoggerService logProvider = GetIt.instance<LoggerService>();
+  final ConfigService configProvider = GetIt.instance<ConfigService>();
 
   HttpController();
 

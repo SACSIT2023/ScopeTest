@@ -1,7 +1,9 @@
+import 'package:get_it/get_it.dart';
+
 import '../services/settings_service.dart';
 
 class UserSettingsService {
-  final SettingsService _settingsService = SettingsService();
+  final SettingsService _settingsService = GetIt.instance<SettingsService>();
 
   Future<void> saveRememberMe(bool value) async {
     await _settingsService.saveBoolValue('isRememberMeChecked', value);

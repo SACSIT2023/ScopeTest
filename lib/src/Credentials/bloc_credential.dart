@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:scope_test/src/Credentials/validator_credential.dart';
 
@@ -9,10 +10,11 @@ import 'http_credential.dart';
 import 'user_settings_service.dart';
 
 class BlocCredential extends ValidatorCredential {
-  final AuthTockenService _authService = AuthTockenService();
-  final HttpCredential _httpCredential = HttpCredential();
-  final UserSettingsService _userSettings = UserSettingsService();
-  final MainData _mainData = MainData();
+  final AuthTockenService _authService = GetIt.instance<AuthTockenService>();
+  final HttpCredential _httpCredential = GetIt.instance<HttpCredential>();
+  final UserSettingsService _userSettings =
+      GetIt.instance<UserSettingsService>();
+  final MainData _mainData = GetIt.instance<MainData>();
 
   BlocCredential();
 

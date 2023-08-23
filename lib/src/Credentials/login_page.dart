@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import '../services/navigation_service.dart';
 import 'user_settings_service.dart';
@@ -19,8 +20,11 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
 
-  final UserSettingsService _userSettings = UserSettingsService();
-  final LoggerService _logProvider = LoggerService();
+  final UserSettingsService _userSettings =
+      GetIt.instance<UserSettingsService>();
+  final LoggerService _logProvider = GetIt.instance<LoggerService>();
+  final NavigationService _navigationService =
+      GetIt.instance<NavigationService>();
 
   @override
   void initState() {
@@ -131,7 +135,7 @@ class LoginPageState extends State<LoginPage> {
               ? () async {
                   final success = await bloc.authenticateUser();
                   if (success) {
-                    NavigationService().navigateTo(HomePage.routeName);
+                    _navigationService.navigateTo(HomePage.routeName);
                   } else {
                     _logProvider.logWarning('Incorrect email or password.');
                   }
@@ -186,7 +190,7 @@ class LoginPageState extends State<LoginPage> {
         TextButton(
           onPressed: () {
             // replace with form SingUp:
-            NavigationService().navigateTo(HomePage.routeName);
+            _navigationService.navigateTo(HomePage.routeName);
           },
           child: const Text('[Create Account]',
               style: TextStyle(color: Colors.orange)),

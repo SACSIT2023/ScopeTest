@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../card_details.dart';
+import '../card_details_raw.dart';
 
 class StripeService {
   final String _publishableKey = "YOUR_STRIPE_PUBLISHABLE_KEY";
 
-  Future<ResponseData> getToken(CardDetails cardDetails) async {
+  Future<ResponseData> getToken(CardDetailsRaw cardDetails) async {
     const url = "https://api.stripe.com/v1/tokens";
 
     try {

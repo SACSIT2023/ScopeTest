@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'package:get_it/get_it.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../card_details.dart';
+import '../card_details_raw.dart';
 import 'stripe_service.dart';
 import 'card_validator.dart';
 
@@ -16,7 +17,7 @@ class TokenizationState {
 }
 
 class TokenizationBloc extends CardValidator {
-  final StripeService _stripeService = StripeService();
+  final StripeService _stripeService = GetIt.instance<StripeService>();
 
   TokenizationBloc();
 
@@ -76,7 +77,7 @@ class TokenizationBloc extends CardValidator {
     final expYear = _expYearController.value;
     final cardName = _cardNameController.value;
 
-    final cardDetails = CardDetails(
+    final cardDetails = CardDetailsRaw(
       cardNumber: cardNumber,
       cvc: cvc,
       expMonth: expMonth,

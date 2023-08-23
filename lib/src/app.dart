@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:scope_test/src/Credentials/login_page.dart';
 import 'package:scope_test/src/Home/home_page.dart';
 
@@ -12,7 +13,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Log Me In',
       initialRoute: HomePage.routeName,
-      navigatorKey: NavigationService().navigatorKey,
+      navigatorKey: GetIt.instance<NavigationService>().navigatorKey,
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case LoginPage.routeName:
