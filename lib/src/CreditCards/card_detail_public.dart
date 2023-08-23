@@ -1,5 +1,3 @@
-import 'cards_utility.dart';
-
 class CardDetailsPublic {
   final String cardName;
   final String cardNumber;
