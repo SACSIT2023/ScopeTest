@@ -5,6 +5,14 @@ import '../services/settings_service.dart';
 class UserSettingsService {
   final SettingsService _settingsService = GetIt.instance<SettingsService>();
 
+  Future<void> forgetMe(String? email) async {
+    if (email != null && email.isNotEmpty) {
+      await _settingsService.saveValue('userEmail', '');
+      await _settingsService.saveValue('userPassword_$email', '');
+      await saveRememberMe(false);
+    }
+  }
+
   Future<void> saveRememberMe(bool value) async {
     await _settingsService.saveBoolValue('isRememberMeChecked', value);
   }

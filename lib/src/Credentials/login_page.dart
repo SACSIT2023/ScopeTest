@@ -65,7 +65,9 @@ class LoginPageState extends State<LoginPage> {
               emailField(bloc),
               passwordField(bloc),
               rememberMeCheckbox(),
+              forgetMeButton(bloc),
               signInButton(bloc),
+              forgetPasswordPrompt(bloc),
               registrationPrompt(),
               errorText(bloc),
             ],
@@ -123,6 +125,46 @@ class LoginPageState extends State<LoginPage> {
         _userSettings.saveRememberMe(value!);
       },
       title: const Text('Remember me'),
+    );
+  }
+
+  Widget forgetPasswordPrompt(BlocCredential bloc) {
+    return StreamBuilder(
+      stream: bloc.email,
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        return TextButton(
+          onPressed: (snapshot.hasData && snapshot.data?.isNotEmpty == true)
+              ? () {
+                  // Here, you can navigate to a "Reset Password" page or
+                  // open a dialog to allow users to reset their password.
+                }
+              : null, // Disabling the button if there's no email
+          child: const Text('Forgot Password?',
+              style: TextStyle(color: Colors.blue)),
+        );
+      },
+    );
+  }
+
+  Widget forgetMeButton(BlocCredential bloc) {
+    return StreamBuilder(
+      stream: bloc.email,
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        return TextButton(
+          onPressed: (snapshot.hasData && snapshot.data?.isNotEmpty == true)
+              ? () async {
+                  await _userSettings.forgetMe(snapshot.data);
+                  bloc.changeEmail('');
+                  bloc.changePassword('');
+                  setState(() {
+                    _rememberMe = false;
+                  });
+                }
+              : null, // Disabling the button if there's no email
+          child: const Text('Forget me',
+              style: TextStyle(color: Colors.redAccent)),
+        );
+      },
     );
   }
 

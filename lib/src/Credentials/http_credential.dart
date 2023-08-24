@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:get_it/get_it.dart';
 
@@ -11,7 +13,7 @@ class HttpCredential {
       GetIt.instance<DeviceInfoService>();
   final LoggerService _logProvider = GetIt.instance<LoggerService>();
 
-  Future<Map<String, String?>> userLogin(String email, String password) async {
+  Future<UserLoginResponse> userLogin(String email, String password) async {
     try {
       var ipAddress = await _deviceInfoService.getIpAddress();
       var operatingSystem = await _deviceInfoService.getOperatingSystem();
@@ -27,14 +29,14 @@ class HttpCredential {
             },
           },
           false);
-      return {'item1': responseData['item1'], 'item2': responseData['item2']};
+      return UserLoginResponse.fromJson(responseData);
     } catch (e, stackTrace) {
       _logProvider.logError('Login failed', e, stackTrace);
-      throw Exception('Login failed');
+      throw Exception(e.toString());
     }
   }
 
-  Future<Map<String, String?>> userSignup(String company, String firstName,
+  Future<UserSignupResponse> userSignup(String company, String firstName,
       String lastName, String email, String password) async {
     try {
       final responseData = await _httpController.sendRequest(
@@ -48,25 +50,15 @@ class HttpCredential {
             "Password": password,
           },
           false);
-      return {'item1': responseData['item1'], 'item2': responseData['item2']};
+      return UserSignupResponse.fromJson(responseData);
     } catch (e, stackTrace) {
       _logProvider.logError('Signup failed', e, stackTrace);
-      throw Exception('Signup failed');
+      throw Exception(e.toString());
     }
   }
 
   Future<String> userLogout(String email) async {
-    try {
-      // If there is internet connection, try sending logs
-      final connectivityResult = await (Connectivity().checkConnectivity());
-      if (connectivityResult != ConnectivityResult.none) {
-        await _sendLogsToServer();
-      } else {
-        return "No internet connection";
-      }
-    } catch (_) {
-      // do nothing
-    }
+    await _sendLogsToServer();
 
     try {
       final responseData = await _httpController.sendRequest(HttpMethod.post,
@@ -74,25 +66,49 @@ class HttpCredential {
       return responseData.toString();
     } catch (e, stackTrace) {
       _logProvider.logError('Logout failed', e, stackTrace);
-      throw Exception('Logout failed');
+      throw Exception(e.toString());
     }
   }
 
   Future<void> _sendLogsToServer() async {
-    try {
-      final logs = await _logProvider.getLogs();
-      final response = await _httpController.sendRequest(
-          HttpMethod.post,
-          'utilities/log',
-          {'logs': logs},
-          true); // Assume that sending logs requires a token
-      if (response['success']) {
-        _logProvider.clearLogs(); // Clear logs on success
-      } else {
-        _logProvider.logWarning('Failed to send logs to backend');
-      }
-    } catch (e, stackTrace) {
-      _logProvider.logError('Failed to send logs to backend', e, stackTrace);
+    final logs = await _logProvider.getLogs();
+    final response = await _httpController.sendRequest(
+        HttpMethod.post,
+        'utilities/log',
+        {'logs': logs},
+        true); // Assume that sending logs requires a token
+    if (response['success']) {
+      _logProvider.clearLogs(); // Clear logs on success
+    } else {
+      _logProvider.logWarning('Failed to send logs to backend');
     }
+  }
+}
+
+class UserLoginResponse {
+  final String? token;
+  final String? errorMessage;
+
+  UserLoginResponse({this.token, this.errorMessage});
+
+  static UserLoginResponse fromJson(Map<String, dynamic> json) {
+    return UserLoginResponse(
+      token: json['item1'] as String?,
+      errorMessage: json['item2'] as String?,
+    );
+  }
+}
+
+class UserSignupResponse {
+  final String? token;
+  final String? errorMessage;
+
+  UserSignupResponse({this.token, this.errorMessage});
+
+  static UserSignupResponse fromJson(Map<String, dynamic> json) {
+    return UserSignupResponse(
+      token: json['item1'] as String?,
+      errorMessage: json['item2'] as String?,
+    );
   }
 }

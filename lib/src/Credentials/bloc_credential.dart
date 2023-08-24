@@ -48,6 +48,7 @@ class BlocCredential extends ValidatorCredential {
           email.isNotEmpty && password.isNotEmpty && password.length > 3);
 
 // business logic
+
   Future<bool> authenticateUser() async {
     String? currentEmail = _email.value;
     String? currentPassword = _password.value;
@@ -56,56 +57,76 @@ class BlocCredential extends ValidatorCredential {
     _errorMessage.sink.add(null);
 
     if (currentEmail.isNotEmpty && currentPassword.isNotEmpty) {
-      final response =
-          await _httpCredential.userLogin(currentEmail, currentPassword);
-      String? token = response['item1'];
+      try {
+        final UserLoginResponse response =
+            await _httpCredential.userLogin(currentEmail, currentPassword);
+        String? token = response.token;
 
-      if (token != null) {
-        _mainData.setuserEmail(currentEmail);
-        _authService.setToken(token);
-        await _userSettings.saveUserCredentials(currentEmail, currentPassword);
-        _isLoading.sink.add(false);
-        return true;
-      } else {
-        _errorMessage.sink.add('Incorrect email or password.');
+        if (token != null) {
+          _mainData.setuserEmail(currentEmail);
+          _authService.setToken(token);
+          await _userSettings.saveUserCredentials(
+              currentEmail, currentPassword);
+          _isLoading.sink.add(false);
+          return true;
+        } else {
+          _errorMessage.sink.add(response.errorMessage);
+        }
+      } catch (e) {
+        _errorMessage.sink.add(e.toString());
       }
     }
     _isLoading.sink.add(false);
     return false;
   }
 
+  // a dialog must indicate error in case of exception
   Future<bool> registerUser(
       String company, String firstName, String lastName) async {
     String? currentEmail = _email.value;
     String? currentPassword = _password.value;
 
     if (currentEmail.isNotEmpty && currentPassword.isNotEmpty) {
-      final response = await _httpCredential.userSignup(
-          company, firstName, lastName, currentEmail, currentPassword);
-      String? token = response['item1'];
+      try {
+        final UserSignupResponse response = await _httpCredential.userSignup(
+            company, firstName, lastName, currentEmail, currentPassword);
+        String? token = response.token;
 
-      if (token != null) {
-        _mainData.setuserEmail(currentEmail);
-        _authService.setToken(token);
-        await _userSettings.saveUserCredentials(currentEmail, currentPassword);
-        return true;
+        if (token != null) {
+          _mainData.setuserEmail(currentEmail);
+          _authService.setToken(token);
+          await _userSettings.saveUserCredentials(
+              currentEmail, currentPassword);
+          _isLoading.sink.add(false);
+          return true;
+        } else {
+          _errorMessage.sink.add(response.errorMessage);
+        }
+      } catch (e) {
+        _errorMessage.sink.add(e.toString());
       }
     }
+    _isLoading.sink.add(false);
     return false;
   }
 
-  Future<bool> signoutUser(String email) async {
+  // a dialog must indicate error in case of exception
+  Future signoutUser(String email) async {
     String? currentEmail = _email.value;
 
     if (currentEmail.isNotEmpty) {
-      final response = await _httpCredential.userLogout(email);
-      if (response.isNotEmpty) {
-        _authService.setToken('');
-        _mainData.setuserEmail('');
-        return true;
+      try {
+        final response = await _httpCredential.userLogout(email);
+        if (response.isNotEmpty) {
+          _authService.setToken('');
+          _mainData.setuserEmail('');
+        } else {
+          throw Exception('Failed to logout, no answer from server');
+        }
+      } catch (e) {
+        throw Exception(e.toString());
       }
     }
-    return false;
   }
 
   // Close stream

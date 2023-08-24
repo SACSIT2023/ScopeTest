@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 
 import 'main_data.dart';
+import 'src/CreditCards/ListingView/card_list_bloc.dart';
 import 'src/CreditCards/credit_card_manager.dart';
 import 'src/CreditCards/AddDialog/stripe_service.dart';
 import 'src/CreditCards/AddDialog/tokenization_bloc.dart';
@@ -10,6 +11,8 @@ import 'src/Credentials/bloc_credential.dart';
 import 'src/Credentials/http_credential.dart';
 import 'src/Credentials/user_settings_service.dart';
 import 'src/app.dart';
+import 'src/notifs/notifications_provider.dart';
+import 'src/notifs/notifications_bloc.dart';
 import 'src/services/auth_tocken_service.dart';
 import 'src/services/config_service.dart';
 import 'src/services/device_info_service.dart';
@@ -39,6 +42,8 @@ void main() {
   getIt.registerSingleton<StripeService>(StripeService());
   getIt.registerSingleton<UserSettingsService>(UserSettingsService());
 
+  getIt.registerSingleton<NotificationsProvider>(NotificationsProvider());
+
   runApp(
     MultiProvider(
       providers: [
@@ -52,8 +57,19 @@ void main() {
         ),
         Provider<TokenizationBloc>(
           create: (context) {
-            // final stripeProvider = context.read<StripeService>();
             return TokenizationBloc();
+          },
+          dispose: (context, bloc) => bloc.dispose(),
+        ),
+        Provider<CardListBloc>(
+          create: (context) {
+            return CardListBloc();
+          },
+          dispose: (context, bloc) => bloc.dispose(),
+        ),
+        Provider<NotificationsBloc>(
+          create: (context) {
+            return NotificationsBloc();
           },
           dispose: (context, bloc) => bloc.dispose(),
         ),
@@ -62,7 +78,7 @@ void main() {
     ),
   );
 }
-
+//
 // void mainOld() {
 //   runApp(
 //     Provider<BlocCredential>(

@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:connectivity/connectivity.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'auth_tocken_service.dart';
 import 'config_service.dart';
 import 'logger_service.dart';
 
-enum HttpMethod { post, put }
+enum HttpMethod { get, post, put }
 
 class HttpController {
   final AuthTockenService authService = GetIt.instance<AuthTockenService>();
@@ -19,7 +20,12 @@ class HttpController {
   }
 
   Future<Map<String, dynamic>> sendRequest(HttpMethod method, String url,
-      Map<String, dynamic> body, bool requiresToken) async {
+      [Map<String, dynamic>? body, bool requiresToken = false]) async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      throw Exception('No internet connection');
+    }
+
     Map<String, String> headers = {'Content-Type': 'application/json'};
     if (requiresToken) {
       String? token = authService.token;
@@ -31,13 +37,22 @@ class HttpController {
     http.Response response;
 
     try {
-      if (method == HttpMethod.post) {
-        response =
-            await http.post(fullUrl, headers: headers, body: json.encode(body));
-      } else {
-        response =
-            await http.put(fullUrl, headers: headers, body: json.encode(body));
+      switch (method) {
+        case HttpMethod.get:
+          response = await http.get(fullUrl, headers: headers);
+          break;
+        case HttpMethod.post:
+          response = await http.post(fullUrl,
+              headers: headers, body: json.encode(body));
+          break;
+        case HttpMethod.put:
+          response = await http.put(fullUrl,
+              headers: headers, body: json.encode(body));
+          break;
+        default:
+          throw Exception('Unsupported HTTP method');
       }
+
       if (response.statusCode != 200) {
         throw Exception('Failed to communicate with server');
       }

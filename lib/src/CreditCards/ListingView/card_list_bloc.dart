@@ -21,11 +21,11 @@ class CardListBloc {
   Stream<CardListState> get state => _stateController.stream;
   Stream<String> get errors => _errorController.stream; // Expose error messages
 
-  fetchCards(String userEmail) async {
+  fetchCards() async {
     _stateController.sink.add(CardListState.loading);
     try {
       List<CardDetailsPublic> fetchedCards =
-          await _creditCardManager.fetchCardListing(userEmail);
+          await _creditCardManager.fetchCardListing();
 
       if (fetchedCards.isEmpty) {
         throw Exception('No cards found or returned value is null.');

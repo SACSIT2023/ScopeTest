@@ -11,12 +11,13 @@ import 'card_widget.dart';
 class CardListPage extends StatefulWidget {
   const CardListPage({super.key});
 
+  static const routeName = '/CardListPage'; // Named route
+
   @override
   CardListPageState createState() => CardListPageState();
 }
 
 class CardListPageState extends State<CardListPage> {
-  final MainData _mainData = GetIt.instance<MainData>();
   final _navigationService = GetIt.instance<NavigationService>();
 
   String? _selectedCardId;
@@ -32,7 +33,7 @@ class CardListPageState extends State<CardListPage> {
 
   Future<void> _loadData(BuildContext context) async {
     final bloc = Provider.of<CardListBloc>(context, listen: false);
-    await bloc.fetchCards(_mainData.userEmail ?? '');
+    await bloc.fetchCards();
   }
 
   @override

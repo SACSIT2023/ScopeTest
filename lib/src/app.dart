@@ -3,6 +3,11 @@ import 'package:get_it/get_it.dart';
 import 'package:scope_test/src/Credentials/login_page.dart';
 import 'package:scope_test/src/Home/home_page.dart';
 
+import 'CreditCards/AddDialog/card_details_page.dart';
+import 'CreditCards/ListingView/card_list_page.dart';
+import 'notifs/notification_detailed_page.dart';
+import 'notifs/notification_list_page.dart';
+import 'notifs/notification_model.dart';
 import 'services/navigation_service.dart';
 
 class App extends StatelessWidget {
@@ -27,6 +32,25 @@ class App extends StatelessWidget {
           case HomePage.routeName:
             return MaterialPageRoute(
               builder: (context) => const HomePage(),
+            );
+          case CardDetailsPage.routeName:
+            return MaterialPageRoute(
+              builder: (context) => const CardDetailsPage(),
+            );
+          case CardListPage.routeName:
+            return MaterialPageRoute(
+              builder: (context) => const CardListPage(),
+            );
+          case NotificationListPage.routeName:
+            return MaterialPageRoute(
+              builder: (context) => const NotificationListPage(),
+            );
+          case NotificationDetailedPage.routeName:
+            final notificationDetailArg =
+                settings.arguments as NotificationModel;
+            return MaterialPageRoute(
+              builder: (context) =>
+                  NotificationDetailedPage(notification: notificationDetailArg),
             );
           // Add other named routes here
           default:
