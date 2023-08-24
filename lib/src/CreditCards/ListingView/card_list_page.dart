@@ -16,13 +16,17 @@ class CardListPage extends StatefulWidget {
 }
 
 class CardListPageState extends State<CardListPage> {
-  final MainData _mainData = MainData();
+  final MainData _mainData = GetIt.instance<MainData>();
+  final _navigationService = GetIt.instance<NavigationService>();
 
-  final _NavigationService = GetIt.instance<NavigationService>();
+  String? _selectedCardId;
 
   @override
   void initState() {
     super.initState();
+    // Schedules _loadData to be called after the current frame has been drawn,
+    // ensuring that the widget has been fully built. This avoids potential issues
+    // related to accessing the context and modifying the state within initState.
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadData(context));
   }
 
@@ -35,7 +39,17 @@ class CardListPageState extends State<CardListPage> {
   Widget build(BuildContext context) {
     final bloc = Provider.of<CardListBloc>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(title: const Text("Cards")),
+      appBar: AppBar(
+        title: const Text("Cards"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: _selectedCardId == null
+                ? null
+                : () => _deleteSelectedCard(context, bloc),
+          ),
+        ],
+      ),
       body: _buildBody(bloc),
       floatingActionButton: _buildFloatingActionButton(bloc),
     );
@@ -84,11 +98,40 @@ class CardListPageState extends State<CardListPage> {
           onPressed: stateSnapshot.data == CardListState.loading
               ? null
               : () {
-                  _NavigationService.navigateTo(CardDetailsPage.routeName);
+                  _navigationService.navigateTo(CardDetailsPage.routeName);
                 },
           child: const Icon(Icons.add),
         );
       },
+    );
+  }
+
+  void _deleteSelectedCard(BuildContext context, CardListBloc bloc) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Card"),
+        content: const Text("Are you sure you want to delete this card?"),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                _navigationService.goBack(), // Updated to use NavigationService
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              _navigationService.goBack(); // Updated to use NavigationService
+              var scr = ScaffoldMessenger.of(context);
+              await bloc.deleteCard(_selectedCardId!);
+              scr.showSnackBar(
+                const SnackBar(content: Text("Card deleted successfully")),
+              );
+              setState(() => _selectedCardId = null);
+            },
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
     );
   }
 

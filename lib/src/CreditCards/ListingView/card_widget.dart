@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+
 import '../card_detail_public.dart';
 import '../cards_utility.dart';
 import 'dart:math' as math;
 
 class CardWidget extends StatefulWidget {
   final CardDetailsPublic cardDetailsPublic;
+  final void Function(String) onTap; // Callback for card selection
 
-  const CardWidget({super.key, required this.cardDetailsPublic});
+  const CardWidget(
+      {super.key, required this.cardDetailsPublic, required this.onTap});
 
   @override
   CardWidgetState createState() => CardWidgetState();
@@ -39,6 +42,8 @@ class CardWidgetState extends State<CardWidget>
   }
 
   void _handleTap() {
+    widget
+        .onTap(widget.cardDetailsPublic.id); // Pass the card ID to the callback
     _flipController.forward().then((_) {
       _isFront = !_isFront;
       _flipController.reverse();

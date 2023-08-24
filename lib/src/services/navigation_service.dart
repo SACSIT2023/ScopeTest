@@ -26,6 +26,8 @@ class NavigationService {
   }
 }
 
+
+
 // *** Forward Navigation with Data:  ***
 //      .pushNamed('/screenB', arguments: 'Hello!');
 //  Called Screen (Screen B) retrieves the data:
