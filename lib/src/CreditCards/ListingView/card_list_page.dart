@@ -83,11 +83,20 @@ class CardListPageState extends State<CardListPage> {
               crossAxisCount: 2),
           itemCount: cardSnapshot.data?.length ?? 0,
           itemBuilder: (context, index) {
-            return CardWidget(cardDetailsPublic: cardSnapshot.data![index]);
+            return CardWidget(
+              cardDetailsPublic: cardSnapshot.data![index],
+              onTap: _handleCardSelection, // Add the selection handler
+            );
           },
         );
       },
     );
+  }
+
+  void _handleCardSelection(String cardId) {
+    setState(() {
+      _selectedCardId = cardId;
+    });
   }
 
   Widget _buildFloatingActionButton(CardListBloc bloc) {

@@ -44,7 +44,7 @@ class CardListBloc {
       var ctp = convertCardDetailsToCardDetailsPublic(cardDetails);
       await _creditCardManager.addCard(stripeToken, ctp);
 
-      final currentCards = _cardsController.value ?? [];
+      final currentCards = _cardsController.value; // ?? [];
       currentCards.add(ctp);
       _cardsController.sink.add(currentCards);
     } catch (e) {
@@ -56,7 +56,7 @@ class CardListBloc {
   deleteCard(String cardId) async {
     try {
       await _creditCardManager.removeCard(cardId);
-      final currentCards = _cardsController.value ?? [];
+      final currentCards = _cardsController.value; // ?? [];
       final updatedCards =
           currentCards.where((card) => card.id != cardId).toList();
       _cardsController.sink.add(updatedCards);
