@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
-import '../../../main_data.dart';
 import '../../services/navigation_service.dart';
 import '../AddDialog/card_details_page.dart';
 import '../card_detail_public.dart';
