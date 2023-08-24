@@ -34,7 +34,7 @@ class NotificationDetailedPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            _buildActionButtons(context, bloc),
+            _buildActionButtons(bloc),
           ],
         ),
       ),
@@ -55,38 +55,43 @@ class NotificationDetailedPage extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, NotificationsBloc bloc) {
-    return Row(
-      mainAxisAlignment:
-          MainAxisAlignment.spaceEvenly, // Center the action buttons
+  Widget _buildActionButtons(NotificationsBloc bloc) {
+    return Column(
       children: [
-        ElevatedButton.icon(
-          icon: const Icon(Icons.check),
-          label: const Text("Mark as Read"),
-          onPressed: () {
-            bloc.markNotificationAsRead(notification.id);
-            _navigationService.goBack();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+        const SizedBox(
+            height: 16), // Adding a spacer at the top for better visual spacing
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton.icon(
+              icon: const Icon(Icons.check),
+              label: const Text("Mark as Read"),
+              onPressed: () {
+                bloc.markNotificationAsRead(notification.id);
+                _navigationService.goBack();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
-          ),
-        ),
-        ElevatedButton.icon(
-          icon: const Icon(Icons.delete_outline),
-          label: const Text("Dismiss"),
-          onPressed: () {
-            bloc.dismissNotification(notification.id);
-            _navigationService.goBack();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.delete_outline),
+              label: const Text("Dismiss"),
+              onPressed: () {
+                bloc.dismissNotification(notification.id);
+                _navigationService.goBack();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );
