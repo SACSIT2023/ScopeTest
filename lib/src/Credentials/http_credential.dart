@@ -1,6 +1,3 @@
-import 'dart:js_interop';
-
-import 'package:connectivity/connectivity.dart';
 import 'package:get_it/get_it.dart';
 
 import '../services/device_info_service.dart';
