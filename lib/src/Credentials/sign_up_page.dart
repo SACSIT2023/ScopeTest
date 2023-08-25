@@ -7,6 +7,8 @@ import '../services/navigation_service.dart';
 import 'bloc_credential.dart';
 import 'sign_in_page.dart';
 
+// need to implement eCAPTCHA v3.
+
 class SignUpPage extends StatefulWidget {
   static const routeName = '/SignUpPage';
 
@@ -174,7 +176,8 @@ class SignUpPageState extends State<SignUpPage> {
                   if (success) {
                     _navigationService.navigateTo(HomePage.routeName);
                   } else {
-                    _navigationService.navigateTo(SignInPage.routeName);
+                    _navigationService.navigateTo(SignInPage.routeName,
+                        arguments: false);
                   }
                 }
               : null,

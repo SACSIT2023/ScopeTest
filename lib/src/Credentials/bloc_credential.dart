@@ -61,7 +61,13 @@ class BlocCredential extends ValidatorCredential {
           email.isNotEmpty && password.isNotEmpty && password.length > 3);
 
   Function(String) get changeRePassword => _rePassword.sink.add;
-  Function(bool) get changeIsCompany => _isCompany.sink.add;
+
+  Function(bool?) get changeIsCompany => (bool? value) {
+        if (value != null) {
+          _isCompany.sink.add(value);
+        }
+      };
+
   Function(String) get changeCompany => _company.sink.add;
   Function(String) get changeFirstName => _firstName.sink.add;
   Function(String) get changeLastName => _lastName.sink.add;

@@ -3,8 +3,10 @@ import 'package:get_it/get_it.dart';
 import 'package:scope_test/src/Credentials/sign_in_page.dart';
 import 'package:scope_test/src/Home/home_page.dart';
 
+import 'Credentials/sign_up_page.dart';
 import 'CreditCards/AddDialog/card_details_page.dart';
 import 'CreditCards/ListingView/card_list_page.dart';
+import 'Home/splash_page.dart';
 import 'notifs/notification_detailed_page.dart';
 import 'notifs/notification_list_page.dart';
 import 'notifs/notification_model.dart';
@@ -16,8 +18,8 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Log Me In',
-      initialRoute: HomePage.routeName,
+      title: 'DragonFlight',
+      initialRoute: SplashPage.routeName,
       navigatorKey: GetIt.instance<NavigationService>().navigatorKey,
       onGenerateRoute: (settings) {
         switch (settings.name) {
@@ -29,9 +31,14 @@ class App extends StatelessWidget {
                 startupMode: startupModeArg ?? false,
               ),
             );
+
           case HomePage.routeName:
             return MaterialPageRoute(
               builder: (context) => const HomePage(),
+            );
+          case SignUpPage.routeName:
+            return MaterialPageRoute(
+              builder: (context) => const SignUpPage(),
             );
           case CardDetailsPage.routeName:
             return MaterialPageRoute(
@@ -67,3 +74,4 @@ class App extends StatelessWidget {
     );
   }
 }
+//SignUpPage
