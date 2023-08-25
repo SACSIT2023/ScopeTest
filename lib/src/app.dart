@@ -45,8 +45,12 @@ class App extends StatelessWidget {
               builder: (context) => const CardDetailsPage(),
             );
           case CardListPage.routeName:
+            final editModeArg = settings.arguments as bool?;
             return MaterialPageRoute(
-              builder: (context) => const CardListPage(),
+              builder: (context) => CardListPage(
+                key: UniqueKey(),
+                editMode: editModeArg ?? false,
+              ),
             );
           case NotificationListPage.routeName:
             return MaterialPageRoute(

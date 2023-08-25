@@ -15,9 +15,9 @@ class CreditCardManager {
   Future<List<CardDetailsPublic>> fetchCardListing() async {
     try {
       Map<String, dynamic> response = await _httpController.sendRequest(
-        HttpMethod.post,
-        'CCards/Listing',
-        {'userEmail': _mainData.userEmail},
+        HttpMethod.get,
+        'CCards/{$_mainData.userEmail}/Listing',
+        null,
         true,
       );
 
@@ -38,10 +38,9 @@ class CreditCardManager {
       String stripeToken, CardDetailsPublic cardDetails) async {
     await _httpController.sendRequest(
       HttpMethod.post,
-      'CCards/AddCard',
+      'CCards/{$_mainData.userEmail}/AddCard',
       {
         'stripeToken': stripeToken,
-        'userEmail': _mainData.userEmail,
         'card': jsonEncode(cardDetails),
       },
       true,
@@ -51,12 +50,9 @@ class CreditCardManager {
   // Remove a card from the backend.
   Future<void> removeCard(String cardId) async {
     await _httpController.sendRequest(
-      HttpMethod.post,
-      'CCards/RemoveCard',
-      {
-        'cardId': cardId,
-        'userEmail': _mainData.userEmail // Assigning the userEmail value here
-      },
+      HttpMethod.delete,
+      'CCards/{$_mainData.userEmail}/RemoveCard',
+      null,
       true,
     );
   }

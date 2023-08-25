@@ -6,7 +6,7 @@ import 'auth_tocken_service.dart';
 import 'config_service.dart';
 import 'logger_service.dart';
 
-enum HttpMethod { get, post, put }
+enum HttpMethod { get, post, put, delete }
 
 class HttpController {
   final AuthTockenService authService = GetIt.instance<AuthTockenService>();
@@ -48,6 +48,9 @@ class HttpController {
         case HttpMethod.put:
           response = await http.put(fullUrl,
               headers: headers, body: json.encode(body));
+          break;
+        case HttpMethod.delete:
+          response = await http.delete(fullUrl, headers: headers);
           break;
         default:
           throw Exception('Unsupported HTTP method');

@@ -8,9 +8,10 @@ import 'card_list_bloc.dart';
 import 'card_widget.dart';
 
 class CardListPage extends StatefulWidget {
-  const CardListPage({super.key});
-
   static const routeName = '/CardListPage'; // Named route
+  final bool editMode;
+
+  const CardListPage({super.key, required this.editMode});
 
   @override
   CardListPageState createState() => CardListPageState();
@@ -129,13 +130,13 @@ class CardListPageState extends State<CardListPage> {
           ),
           TextButton(
             onPressed: () async {
-              _navigationService.goBack(); // Updated to use NavigationService
               var scr = ScaffoldMessenger.of(context);
               await bloc.deleteCard(_selectedCardId!);
               scr.showSnackBar(
                 const SnackBar(content: Text("Card deleted successfully")),
               );
               setState(() => _selectedCardId = null);
+              _navigationService.goBack(); // Updated to use NavigationService
             },
             child: const Text("Delete"),
           ),

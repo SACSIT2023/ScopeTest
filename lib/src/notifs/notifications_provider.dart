@@ -13,7 +13,7 @@ class NotificationsProvider {
   Future<List<NotificationModel>> fetchNotifications() async {
     try {
       Map<String, dynamic> response = await _httpController.sendRequest(
-        HttpMethod.post,
+        HttpMethod.get,
         'notifications/{$_mainData.userEmail}/Listing',
         null,
         true,
