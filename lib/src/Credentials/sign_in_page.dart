@@ -7,17 +7,17 @@ import 'bloc_credential.dart';
 import '../services/logger_service.dart';
 import '../Home/home_page.dart';
 
-class LoginPage extends StatefulWidget {
+class SignInPage extends StatefulWidget {
   static const routeName = '/LoginPage'; // Named route
   final bool startupMode;
 
-  const LoginPage({super.key, required this.startupMode});
+  const SignInPage({super.key, required this.startupMode});
 
   @override
-  LoginPageState createState() => LoginPageState();
+  SignInPageState createState() => SignInPageState();
 }
 
-class LoginPageState extends State<LoginPage> {
+class SignInPageState extends State<SignInPage> {
   bool _rememberMe = false;
 
   final UserSettingsService _userSettings =
@@ -170,7 +170,7 @@ class LoginPageState extends State<LoginPage> {
 
   Widget signInButton(BlocCredential bloc) {
     return StreamBuilder<bool>(
-      stream: bloc.isValid,
+      stream: bloc.isValidSignIn,
       builder: (context, snapshot) {
         return ElevatedButton(
           onPressed: snapshot.hasData && snapshot.data == true

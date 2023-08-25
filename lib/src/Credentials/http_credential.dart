@@ -33,13 +33,14 @@ class HttpCredential {
     }
   }
 
-  Future<UserSignupResponse> userSignup(String company, String firstName,
-      String lastName, String email, String password) async {
+  Future<UserSignupResponse> userSignup(bool isCompany, String company,
+      String firstName, String lastName, String email, String password) async {
     try {
       final responseData = await _httpController.sendRequest(
           HttpMethod.put,
           'User/Registration/SignUp',
           {
+            "isCompany": isCompany,
             "Company": company,
             "FirstName": firstName,
             "LastName": lastName,

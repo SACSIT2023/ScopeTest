@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:scope_test/src/Credentials/login_page.dart';
+import 'package:scope_test/src/Credentials/sign_in_page.dart';
 import 'package:scope_test/src/Home/home_page.dart';
 
 import 'CreditCards/AddDialog/card_details_page.dart';
@@ -21,10 +21,10 @@ class App extends StatelessWidget {
       navigatorKey: GetIt.instance<NavigationService>().navigatorKey,
       onGenerateRoute: (settings) {
         switch (settings.name) {
-          case LoginPage.routeName:
+          case SignInPage.routeName:
             final startupModeArg = settings.arguments as bool?;
             return MaterialPageRoute(
-              builder: (context) => LoginPage(
+              builder: (context) => SignInPage(
                 key: UniqueKey(), // This will provide a unique key every time
                 startupMode: startupModeArg ?? false,
               ),

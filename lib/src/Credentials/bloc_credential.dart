@@ -23,11 +23,24 @@ class BlocCredential extends ValidatorCredential {
   final _isLoading = BehaviorSubject<bool>.seeded(false);
   final _errorMessage = BehaviorSubject<String?>.seeded(null);
 
+  final BehaviorSubject<String> _rePassword = BehaviorSubject<String>();
+  final BehaviorSubject<bool> _isCompany = BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<String> _company = BehaviorSubject<String>();
+  final BehaviorSubject<String> _firstName = BehaviorSubject<String>();
+  final BehaviorSubject<String> _lastName = BehaviorSubject<String>();
+
   // Add data to stream
   Stream<String> get email => _email.stream.transform(validateEmail);
   Stream<String> get password => _password.stream.transform(validatePassword);
   Stream<bool> get isLoading => _isLoading.stream;
   Stream<String?> get errorMessage => _errorMessage.stream;
+
+  Stream<String> get rePassword =>
+      _rePassword.stream.transform(validatePassword);
+  Stream<bool> get isCompany => _isCompany.stream;
+  Stream<String> get company => _company.stream;
+  Stream<String> get firstName => _firstName.stream;
+  Stream<String> get lastName => _lastName.stream;
 
   // Change data
   Function(String) get changeEmail => (email) {
@@ -41,11 +54,43 @@ class BlocCredential extends ValidatorCredential {
     _errorMessage.sink.add(message);
   }
 
-  Stream<bool> get isValid => Rx.combineLatest2(
+  Stream<bool> get isValidSignIn => Rx.combineLatest2(
       email,
       password,
       (String email, String password) =>
           email.isNotEmpty && password.isNotEmpty && password.length > 3);
+
+  Function(String) get changeRePassword => _rePassword.sink.add;
+  Function(bool) get changeIsCompany => _isCompany.sink.add;
+  Function(String) get changeCompany => _company.sink.add;
+  Function(String) get changeFirstName => _firstName.sink.add;
+  Function(String) get changeLastName => _lastName.sink.add;
+
+  Stream<bool> get isValidSignUp {
+    return Rx.combineLatest7(
+        email, password, rePassword, isCompany, company, firstName, lastName, (
+      String email,
+      String password,
+      String rePassword,
+      bool isCompany,
+      String companyName,
+      String firstName,
+      String lastName,
+    ) {
+      bool baseCondition = email.isNotEmpty &&
+          password.isNotEmpty &&
+          password.length > 3 &&
+          password == rePassword;
+
+      if (!baseCondition) return false;
+
+      if (isCompany) {
+        return companyName.length >= 2;
+      } else {
+        return firstName.length >= 2 && lastName.length >= 2;
+      }
+    });
+  }
 
 // business logic
 
@@ -81,15 +126,19 @@ class BlocCredential extends ValidatorCredential {
   }
 
   // a dialog must indicate error in case of exception
-  Future<bool> registerUser(
-      String company, String firstName, String lastName) async {
+  Future<bool> registerUser() async {
     String? currentEmail = _email.value;
     String? currentPassword = _password.value;
+
+    bool? isitacompany = _isCompany.value;
+    String? companyName = _company.value;
+    String? fn = _firstName.value;
+    String? ln = _lastName.value;
 
     if (currentEmail.isNotEmpty && currentPassword.isNotEmpty) {
       try {
         final UserSignupResponse response = await _httpCredential.userSignup(
-            company, firstName, lastName, currentEmail, currentPassword);
+            isitacompany, companyName, fn, ln, currentEmail, currentPassword);
         String? token = response.token;
 
         if (token != null) {
@@ -136,5 +185,11 @@ class BlocCredential extends ValidatorCredential {
     _password.close();
     _isLoading.close();
     _errorMessage.close();
+
+    _rePassword.close();
+    _isCompany.close();
+    _company.close();
+    _firstName.close();
+    _lastName.close();
   }
 }

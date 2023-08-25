@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../services/app_image_paths.dart';
-import '../Credentials/login_page.dart';
+import '../Credentials/sign_in_page.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home';
@@ -17,7 +17,7 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushNamed(context, LoginPage.routeName,
+      Navigator.pushNamed(context, SignInPage.routeName,
           arguments: true); // Pass true to indicate it is @startup
     });
   }
