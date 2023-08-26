@@ -21,10 +21,19 @@ class TokenizationBloc extends CardValidator {
 
   TokenizationBloc();
 
+  CardDetailsRaw get currentCardDetails => CardDetailsRaw(
+        cardNumber: _cardNumberController.value,
+        cvc: _cvcController.value,
+        expMonth: _expMonthController.value,
+        expYear: _expYearController.value,
+        cardName: _cardNameController.value,
+      );
+
   final _stateController = BehaviorSubject<TokenizationState>.seeded(
       TokenizationState(status: TokenizationStatus.initial));
 
   Stream<TokenizationState> get state => _stateController.stream;
+  Stream<String> get tokenValue => _tokenValueController.stream;
 
   Stream<bool> get isValid => Rx.combineLatest5(
       cardNumber,
@@ -46,6 +55,9 @@ class TokenizationBloc extends CardValidator {
   final _expMonthController = BehaviorSubject<String>();
   final _expYearController = BehaviorSubject<String>();
   final _cardNameController = BehaviorSubject<String>();
+
+  final _tokenValueController = BehaviorSubject<String>();
+  String get currentTokenValue => _tokenValueController.value;
 
   // Output stream controllers (no need anymore as TokenizationState that handles the state (including token or error results))
   //final _tokenizationResultController = StreamController<ResponseData>();
@@ -92,11 +104,13 @@ class TokenizationBloc extends CardValidator {
         status: TokenizationStatus.success,
         token: response.data,
       ));
+      _tokenValueController.add(response.data!);
     } else {
       _stateController.add(TokenizationState(
         status: TokenizationStatus.error,
         errorMessage: response.error,
       ));
+      _tokenValueController.add('');
     }
   }
 
@@ -107,5 +121,6 @@ class TokenizationBloc extends CardValidator {
     _expYearController.close();
     _cardNameController.close();
     _stateController.close();
+    _tokenValueController.close();
   }
 }

@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import '../../services/navigation_service.dart';
 import '../AddDialog/card_details_page.dart';
+import '../AddDialog/tokenization_bloc.dart';
 import '../card_detail_public.dart';
 import 'card_list_bloc.dart';
 import 'card_widget.dart';
@@ -38,21 +39,31 @@ class CardListPageState extends State<CardListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of<CardListBloc>(context, listen: false);
+    final blocListing = Provider.of<CardListBloc>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cards"),
+        title: const Text("Credit Cards"),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: _selectedCardId == null
-                ? null
-                : () => _deleteSelectedCard(context, bloc),
-          ),
+          if (widget.editMode)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: _selectedCardId == null
+                  ? null
+                  : () => _deleteSelectedCard(context, blocListing),
+            ),
+          if (!widget.editMode)
+            IconButton(
+              icon: const Icon(Icons.check), // Icon for "Select Card"
+              onPressed: _selectedCardId == null
+                  ? null
+                  : () {
+                      _navigationService.goBack(result: _selectedCardId);
+                    },
+            ),
         ],
       ),
-      body: _buildBody(bloc),
-      floatingActionButton: _buildFloatingActionButton(bloc),
+      body: _buildBody(blocListing),
+      floatingActionButton: _buildFloatingActionButton(blocListing),
     );
   }
 
@@ -100,15 +111,25 @@ class CardListPageState extends State<CardListPage> {
     });
   }
 
-  Widget _buildFloatingActionButton(CardListBloc bloc) {
+  Widget _buildFloatingActionButton(CardListBloc blocListing) {
     return StreamBuilder<CardListState>(
-      stream: bloc.state,
+      stream: blocListing.state,
       builder: (context, stateSnapshot) {
         return FloatingActionButton(
           onPressed: stateSnapshot.data == CardListState.loading
               ? null
               : () {
                   _navigationService.navigateTo(CardDetailsPage.routeName);
+                  final blocTockenization =
+                      Provider.of<TokenizationBloc>(context, listen: false);
+                  if (blocTockenization.currentTokenValue.isNotEmpty) {
+                    blocListing.addCard(blocTockenization.currentTokenValue,
+                        blocTockenization.currentCardDetails);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content:
+                            Text('Tokenization failed. Please try again.')));
+                  }
                 },
           child: const Icon(Icons.add),
         );

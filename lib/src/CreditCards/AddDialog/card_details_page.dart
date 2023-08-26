@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import '../../services/navigation_service.dart';
 import 'tokenization_bloc.dart';
 
 class CardDetailsPage extends StatefulWidget {
@@ -12,6 +14,8 @@ class CardDetailsPage extends StatefulWidget {
 }
 
 class CardDetailsPageState extends State<CardDetailsPage> {
+  final _navigationService = GetIt.instance<NavigationService>();
+
   final _cardNumberController = TextEditingController();
   final _cvcController = TextEditingController();
   final _expMonthController = TextEditingController();
@@ -25,7 +29,8 @@ class CardDetailsPageState extends State<CardDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of<TokenizationBloc>(context, listen: false);
+    final tokenizationBloc =
+        Provider.of<TokenizationBloc>(context, listen: false);
 
     return Scaffold(
       appBar: buildAppBar(),
@@ -34,13 +39,13 @@ class CardDetailsPageState extends State<CardDetailsPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              buildCardNumberField(bloc),
-              buildCvcField(bloc),
-              buildExpMonthField(bloc),
-              buildExpYearField(bloc),
-              buildCardNameField(bloc),
-              buildTokenizationStatus(bloc),
-              buildTokenizeCardButton(bloc),
+              buildCardNumberField(tokenizationBloc),
+              buildCvcField(tokenizationBloc),
+              buildExpMonthField(tokenizationBloc),
+              buildExpYearField(tokenizationBloc),
+              buildCardNameField(tokenizationBloc),
+              buildTokenizationStatus(tokenizationBloc),
+              buildTokenizeCardButton(tokenizationBloc),
             ],
           ),
         ),
@@ -144,7 +149,7 @@ class CardDetailsPageState extends State<CardDetailsPage> {
             case TokenizationStatus.loading:
               return const CircularProgressIndicator();
             case TokenizationStatus.success:
-              return Text("Tokenization Success! Token: ${state.token}");
+              return const Text("card accepted!"); // Token: ${state.token}
             case TokenizationStatus.error:
               return Text("Error: ${state.errorMessage}");
             default:
@@ -158,7 +163,7 @@ class CardDetailsPageState extends State<CardDetailsPage> {
 
   Widget buildTokenizeCardButton(TokenizationBloc bloc) {
     return StreamBuilder<bool>(
-      stream: bloc.isValid, // Assuming you have added the isValid stream
+      stream: bloc.isValid,
       builder: (BuildContext context, AsyncSnapshot<bool> validSnapshot) {
         return StreamBuilder<TokenizationState>(
           stream: bloc.state,
@@ -170,8 +175,9 @@ class CardDetailsPageState extends State<CardDetailsPage> {
             return ElevatedButton(
               onPressed:
                   (validSnapshot.hasData && validSnapshot.data! && !isLoading)
-                      ? () {
-                          bloc.tokenize();
+                      ? () async {
+                          await bloc.tokenize();
+                          _navigationService.goBack();
                         }
                       : null, // null disables the button
               child: isLoading
