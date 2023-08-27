@@ -21,7 +21,18 @@ import 'src/services/logger_service.dart';
 import 'src/services/navigation_service.dart';
 import 'src/services/settings_service.dart';
 
-void main() {
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+
+void main() async {
+  await dotenv.load(fileName: ".env");
+
+  WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = dotenv.env['stripePublicKey'] ?? "";
+  Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
+  Stripe.urlScheme = 'flutterstripe';
+  await Stripe.instance.applySettings();
+
   final getIt = GetIt.instance;
 
   getIt.registerSingleton<NavigationService>(NavigationService());

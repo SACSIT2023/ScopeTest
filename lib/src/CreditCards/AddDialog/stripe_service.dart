@@ -1,18 +1,18 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../card_details_raw.dart';
 
 class StripeService {
-  final String _publishableKey = "YOUR_STRIPE_PUBLISHABLE_KEY";
-
   Future<ResponseData> getToken(CardDetailsRaw cardDetails) async {
     const url = "https://api.stripe.com/v1/tokens";
+    final String publishableKey = dotenv.env['stripePublicKey'] ?? "";
 
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: {
-          'Authorization': 'Bearer $_publishableKey',
+          'Authorization': 'Bearer $publishableKey',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
